@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     required: true
   }
 },{
-  timestamps: true   // 🔥 createdAt, updatedAt
+  timestamps: true   
 });
 
 module.exports = mongoose.model("User", userSchema);

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./auth.css";
 
-// 🔥 backend URL (yaha apna render link daal)
 const BASE_URL = "https://assignment-1-0a3e.onrender.com";
 
 function Signup(){
@@ -22,7 +21,6 @@ function Signup(){
     e.preventDefault();
     setError("");
 
-    // validation
     if(data.password.length < 6){
       setError("Password must be at least 6 characters");
       return;
@@ -44,7 +42,6 @@ function Signup(){
 
       navigate("/login");
     }catch(err){
-      // 🔥 backend error show
       setError(err.response?.data?.message || "Signup failed");
     }finally{
       setLoading(false);

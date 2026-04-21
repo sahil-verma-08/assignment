@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./auth.css";
 
-// 🔥 apna backend URL daal
 const BASE_URL = "https://assignment-1-0a3e.onrender.com";
 
 function Login(){
@@ -24,13 +23,11 @@ function Login(){
         data
       );
 
-      // 🔥 token store
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("name", res.data.name);
 
       navigate("/dashboard");
     }catch(err){
-      // 🔥 backend error show
       setError(err.response?.data?.message || "Login failed");
     }finally{
       setLoading(false);

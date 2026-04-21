@@ -3,7 +3,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// 🔥 helper: get user from token
+
 const getUserFromToken = (req) => {
   const auth = req.headers.authorization;
   if (!auth) throw new Error("No token");
@@ -13,12 +13,12 @@ const getUserFromToken = (req) => {
   return decoded.id;
 };
 
-// ------------------- SIGNUP -------------------
+
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // validation
+    
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields required" });
     }
@@ -27,7 +27,7 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
-    // check existing user
+    
     const exists = await User.findOne({ email });
     if (exists) {
       return res.status(400).json({ message: "Email already exists" });
@@ -52,7 +52,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// ------------------- LOGIN -------------------
+
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -79,7 +79,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// ------------------- GET PROFILE -------------------
+
 router.get("/me", async (req, res) => {
   try {
     const userId = getUserFromToken(req);
@@ -92,7 +92,7 @@ router.get("/me", async (req, res) => {
   }
 });
 
-// ------------------- UPDATE PROFILE -------------------
+
 router.put("/update", async (req, res) => {
   try {
     const userId = getUserFromToken(req);

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 
-// 🔥 backend URL
+
 const BASE_URL = "https://assignment-1-0a3e.onrender.com";
 
 function Dashboard(){
@@ -42,9 +42,9 @@ function Dashboard(){
 
     fetchUser();
 
-  },[navigate, token]); // ✅ FIXED
+  },[navigate, token]); 
 
-  // 🔥 update profile
+  
   const handleUpdate = async ()=>{
     try{
       await axios.put(
@@ -62,7 +62,7 @@ function Dashboard(){
     }
   };
 
-  // 🔥 logout
+
   const handleLogout = ()=>{
     localStorage.removeItem("token");
     navigate("/login");
@@ -79,13 +79,13 @@ function Dashboard(){
   return (
     <div className="dash-container">
 
-      {/* Navbar */}
+     
       <div className="dash-navbar">
         <h2>Dashboard</h2>
         <button onClick={handleLogout}>Logout</button>
       </div>
 
-      {/* Content */}
+      
       <div className="dash-content">
 
         <h1>Welcome {user.name} </h1>
