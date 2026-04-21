@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 
-// 🔥 apna backend URL daal
+// 🔥 backend URL
 const BASE_URL = "https://assignment-1-0a3e.onrender.com";
 
 function Dashboard(){
@@ -18,25 +18,31 @@ function Dashboard(){
 
   useEffect(()=>{
     if(!token){
-      return navigate("/login");
+      navigate("/login");
+      return;
     }
 
-    axios.get(`${BASE_URL}/api/auth/me`,{
-      headers:{
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(res => {
-      setUser(res.data);
-      setLoading(false);
-    })
-    .catch(()=>{
-      setError("Session expired. Please login again.");
-      localStorage.removeItem("token");
-      navigate("/login");
-    });
+    const fetchUser = async () => {
+      try{
+        const res = await axios.get(`${BASE_URL}/api/auth/me`,{
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        });
 
-  },[]);
+        setUser(res.data);
+      }catch{
+        setError("Session expired. Please login again.");
+        localStorage.removeItem("token");
+        navigate("/login");
+      }finally{
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+
+  },[navigate, token]); // ✅ FIXED
 
   // 🔥 update profile
   const handleUpdate = async ()=>{
@@ -54,16 +60,20 @@ function Dashboard(){
     }catch{
       alert("Update failed");
     }
-  }
+  };
 
   // 🔥 logout
   const handleLogout = ()=>{
     localStorage.removeItem("token");
     navigate("/login");
-  }
+  };
 
   if(loading){
-    return <h2 style={{textAlign:"center", marginTop:"50px"}}>Loading...</h2>;
+    return (
+      <h2 style={{textAlign:"center", marginTop:"50px"}}>
+        Loading...
+      </h2>
+    );
   }
 
   return (
@@ -78,12 +88,11 @@ function Dashboard(){
       {/* Content */}
       <div className="dash-content">
 
-        <h1>Welcome {user.name} 👋</h1>
-        <p>You are successfully logged in 🎉</p>
+        <h1>Welcome {user.name} </h1>
+        <p>You are successfully logged in </p>
 
         {error && <p style={{color:"red"}}>{error}</p>}
 
-        {/* Cards */}
         <div className="card-container">
 
           <div className="card">
@@ -112,12 +121,11 @@ function Dashboard(){
 
           <div className="card">
             <h3>Status</h3>
-            <p>Active ✅</p>
+            <p>Active </p>
           </div>
 
         </div>
 
-        {/* Buttons */}
         <div style={{marginTop:"20px"}}>
           {edit ? (
             <button onClick={handleUpdate}>Save</button>
@@ -128,7 +136,7 @@ function Dashboard(){
 
       </div>
     </div>
-  )
+  );
 }
 
 export default Dashboard;
