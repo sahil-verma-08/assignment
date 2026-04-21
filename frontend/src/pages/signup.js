@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./auth.css";
 
+// 🔥 backend URL (yaha apna render link daal)
+const BASE_URL = "https://assignment-1-0a3e.onrender.com";
+
 function Signup(){
   const [data,setData] = useState({
     name:"",
@@ -12,13 +15,14 @@ function Signup(){
   });
 
   const [error,setError] = useState("");
+  const [loading,setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
     setError("");
 
-    
+    // validation
     if(data.password.length < 6){
       setError("Password must be at least 6 characters");
       return;
@@ -29,8 +33,10 @@ function Signup(){
       return;
     }
 
+    setLoading(true);
+
     try{
-      await axios.post("http://localhost:5000/api/auth/signup",{
+      await axios.post(`${BASE_URL}/api/auth/signup`,{
         name: data.name,
         email: data.email,
         password: data.password
@@ -38,7 +44,10 @@ function Signup(){
 
       navigate("/login");
     }catch(err){
-      setError("Signup failed");
+      // 🔥 backend error show
+      setError(err.response?.data?.message || "Signup failed");
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -68,7 +77,6 @@ function Signup(){
             type="password"
             placeholder="Password"
             required
-            minLength="6"
             value={data.password}
             onChange={e=>setData({...data,password:e.target.value})}
           />
@@ -81,10 +89,11 @@ function Signup(){
             onChange={e=>setData({...data,confirmPassword:e.target.value})}
           />
 
-          {/* Error */}
           {error && <p style={{color:"red"}}>{error}</p>}
 
-          <button type="submit">Sign Up</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Signing up..." : "Sign Up"}
+          </button>
         </form>
 
         <p>

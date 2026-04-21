@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./auth.css";
 
+// 🔥 apna backend URL daal
+const BASE_URL = "https://assignment-1-0a3e.onrender.com";
+
 function Login(){
   const [data,setData] = useState({email:"",password:""});
   const [loading,setLoading] = useState(false);
@@ -13,25 +16,22 @@ function Login(){
     e.preventDefault();
     setError("");
 
-    
-    if(data.password.length < 6){
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
     setLoading(true);
 
     try{
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${BASE_URL}/api/auth/login`,
         data
       );
 
+      // 🔥 token store
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("name", res.data.name);
 
       navigate("/dashboard");
     }catch(err){
-      setError("Invalid email or password");
+      // 🔥 backend error show
+      setError(err.response?.data?.message || "Login failed");
     }finally{
       setLoading(false);
     }
@@ -40,9 +40,9 @@ function Login(){
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>LOGIN </h2>
+        <h2>Login</h2>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <input
             type="email"
             placeholder="Email"
@@ -59,8 +59,11 @@ function Login(){
             onChange={e=>setData({...data,password:e.target.value})}
           />
 
-          
-          {error && <p style={{color:"red", marginTop:"5px"}}>{error}</p>}
+          {error && (
+            <p style={{color:"red", marginTop:"5px"}}>
+              {error}
+            </p>
+          )}
 
           <button type="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login"}

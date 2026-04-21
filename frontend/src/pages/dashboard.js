@@ -3,11 +3,16 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./dashboard.css";
 
+// 🔥 apna backend URL daal
+const BASE_URL = "https://assignment-1-0a3e.onrender.com";
+
 function Dashboard(){
   const navigate = useNavigate();
 
   const [user, setUser] = useState({name:"", email:""});
   const [edit, setEdit] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -16,14 +21,20 @@ function Dashboard(){
       return navigate("/login");
     }
 
-    // 🔥 fetch user data
-    axios.get("http://localhost:5000/api/auth/me",{
+    axios.get(`${BASE_URL}/api/auth/me`,{
       headers:{
         Authorization: `Bearer ${token}`
       }
     })
-    .then(res => setUser(res.data))
-    .catch(()=> navigate("/login"));
+    .then(res => {
+      setUser(res.data);
+      setLoading(false);
+    })
+    .catch(()=>{
+      setError("Session expired. Please login again.");
+      localStorage.removeItem("token");
+      navigate("/login");
+    });
 
   },[]);
 
@@ -31,7 +42,7 @@ function Dashboard(){
   const handleUpdate = async ()=>{
     try{
       await axios.put(
-        "http://localhost:5000/api/auth/update",
+        `${BASE_URL}/api/auth/update`,
         user,
         {
           headers:{
@@ -51,6 +62,10 @@ function Dashboard(){
     navigate("/login");
   }
 
+  if(loading){
+    return <h2 style={{textAlign:"center", marginTop:"50px"}}>Loading...</h2>;
+  }
+
   return (
     <div className="dash-container">
 
@@ -63,14 +78,14 @@ function Dashboard(){
       {/* Content */}
       <div className="dash-content">
 
-        {/* 🔥 Dynamic Name */}
-        <h1>Welcome {user.name} </h1>
-        <p>You are successfully logged in </p>
+        <h1>Welcome {user.name} 👋</h1>
+        <p>You are successfully logged in 🎉</p>
+
+        {error && <p style={{color:"red"}}>{error}</p>}
 
         {/* Cards */}
         <div className="card-container">
 
-          {/* Name Card */}
           <div className="card">
             <h3>Name</h3>
             {edit ? (
@@ -83,7 +98,6 @@ function Dashboard(){
             )}
           </div>
 
-          {/* Email Card */}
           <div className="card">
             <h3>Email</h3>
             {edit ? (
@@ -96,10 +110,9 @@ function Dashboard(){
             )}
           </div>
 
-          {/* Status */}
           <div className="card">
             <h3>Status</h3>
-            <p>Active </p>
+            <p>Active ✅</p>
           </div>
 
         </div>
